@@ -3,7 +3,7 @@
 
 AF_DCMotor motorDome(3, MOTOR34_64KHZ);
 
-int motorSpeedDome = 64;//changed to 5V for motor power
+int motorSpeedDome = 100;//changed to 5V for motor power
 
 enum PinAssignments {
   encoderPinA = 19,
@@ -16,31 +16,6 @@ unsigned int lastReportedPos = 1;
 
 boolean A_set = false;
 boolean B_set = false;
-
-
-#include "protothreads.h"
-
-pt ptDome;
-int domeThread(struct pt* pt) {
-  PT_BEGIN(pt);
-
-  // Loop forever
-  for(;;) {
-    if (buttonState == HIGH) {
-      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      PT_SLEEP(pt, 200);
-      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      PT_SLEEP(pt, 100);
-    } else {
-      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      PT_YIELD(pt);
-    }
-  }
-
-  PT_END(pt);
-}
-
-
 
 // Interrupt on A changing state
 void doEncoderA(){
@@ -136,6 +111,33 @@ void domeSetPosHome(int pos)
 */
 }
 
+void domeSetPos(int pos)
+{
+  if(pos>=0 && pos>encoderPos)
+  {
+    if(abs(encoderPos-pos)<1)
+    {
+      domeBreak();
+      return;
+    }
+    domeCW();
+  }
+  else if(pos<0 && pos<encoderPos)
+  {
+    if(abs(encoderPos-pos)<1)
+    {
+      domeBreak();  
+    }
+    domeCCW();
+  }
+  /*Serial.print("  #### Reached target  delta ===>  ");
+  Serial.println(encoderPos-pos, DEC);
+  Serial.print("  #### Current Pos ===>  ");
+  Serial.println(encoderPos, DEC);
+  
+  disableDomeEncoder();
+*/
+}
 
 void domeEncoderTest(){ 
   if (lastReportedPos != encoderPos) {
@@ -155,7 +157,7 @@ void domeHoming()
   delay(1000);
   domeCCW();  
   while(digitalRead(clearButton) != HIGH)
-      Serial.println(encoderPos);
+      //Serial.println(encoderPos);
   encoderPos = 0;
   domeBreak();
 }
@@ -210,6 +212,6 @@ void initDome()
   pinMode(clearButton, INPUT_PULLUP);
 
   enableDomeEncoder();
-  domeHoming();
+  //domeHoming();
   //disableDomeEncoder();
 }

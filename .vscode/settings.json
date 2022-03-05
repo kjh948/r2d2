@@ -1,8 +1,11 @@
 {
     "python.autoComplete.extraPaths": [
         "/opt/ros/kinetic/lib/python2.7/dist-packages"
+<<<<<<< HEAD
     ],
     "python.analysis.extraPaths": [
         "/opt/ros/kinetic/lib/python2.7/dist-packages"
+=======
+>>>>>>> 2ba3a47315693fa8d4e5848b50e0cafee52bd938
     ]
 }

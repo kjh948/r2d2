@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "configurations": [
         {
             "browse": {
@@ -17,4 +18,19 @@
         }
     ],
     "version": 4
+=======
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/opt/ros/kinetic/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ]
+>>>>>>> 2ba3a47315693fa8d4e5848b50e0cafee52bd938
 }

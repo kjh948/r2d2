@@ -1,5 +1,11 @@
 #import <Arduino.h>
-#include "printf.h"
+//#include "printf.h"
+
+#include <ros.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/Int16.h>
+#include "geometry_msgs/Twist.h"
 
 #include <ros.h>
 #include <std_msgs/String.h>

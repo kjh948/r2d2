@@ -47,6 +47,9 @@ import time
 import dlib
 import threading
 
+
+from TFLiteFaceDetector import UltraLightFaceDetecion
+
 """ I stole this (see ../../ros2opencv).
     The primary reason was that my IDE (and ROS) is not able to see it.
     I believe something happened to the way that the __init etc. python grunge
@@ -386,6 +389,10 @@ class FaceTracker(ROS2OpenCV):
         if self.cascade_profile:
             self.cascade_profile = cv2.CascadeClassifier(self.cascade_profile)
 
+        #ultra_fast_face_detection from tflite
+        self.fd_path = rospy.get_param("~fd_path", "")
+        self.fd = UltraLightFaceDetecion(self.fd_path,conf_threshold=0.6)
+
         # set up track_next_frame()
         ## The color of the rectangle we draw around the face
         self.rectangleColor = (0, 165, 255)
@@ -578,6 +585,7 @@ class FaceTracker(ROS2OpenCV):
         # For the face detection, we need to make use of a gray
         # colored image so we will convert the baseImage to a
         # gray-based image
+        '''
         gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         # Now use the haar cascade detector to find all faces
         # in the image
@@ -594,6 +602,14 @@ class FaceTracker(ROS2OpenCV):
             y = int(_y)
             w = int(_w)
             h = int(_h)
+            self.check_is_tracking(cv_image, x, y, w, h)
+        '''
+        boxes, scores = self.fd.inference(cv_image)
+        for result in boxes.astype(int):
+            x = int(result[0])
+            y = int(result[1])
+            w = int(result[2]-result[0])
+            h = int(result[3]-result[1])
             self.check_is_tracking(cv_image, x, y, w, h)
 
     # Use the DBL library to track faces over time

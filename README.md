@@ -9,7 +9,7 @@ rosdep install --from-paths src --ignore-src -r -y
 sudo apt-get install ros-noetic-web-video-server
 rosrun web_video_server web_video_server
 
-
+roslaunch ros2opencv usb_cam.launch
 roslaunch pi_face_tracker face_tracker_usb_cam.launch
 
 https://stackoverflow.com/questions/19579528/pygame-installation-sdl-config-command-not-found

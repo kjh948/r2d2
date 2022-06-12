@@ -35,6 +35,7 @@
   	<param name="cascade_frontal_alt" value="$(find pi_face_tracker)/params/haarcascade_frontalface_alt.xml" />
    	<param name="cascade_frontal_alt2" value="$(find pi_face_tracker)/params/haarcascade_frontalface_alt2.xml" />
   	<param name="cascade_profile" value="$(find pi_face_tracker)/params/haarcascade_profileface.xml" />
+    <param name="fd_path" value="$(find pi_face_tracker)/params/version-slim-320_without_postprocessing.tflite" />
 
   </node>
 </launch>

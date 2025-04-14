@@ -212,6 +212,6 @@ void initDome()
   pinMode(clearButton, INPUT_PULLUP);
 
   enableDomeEncoder();
-  //domeHoming();
+  domeHoming();
   //disableDomeEncoder();
 }

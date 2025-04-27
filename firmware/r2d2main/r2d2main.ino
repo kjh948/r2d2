@@ -45,21 +45,23 @@ std_msgs::Int16 led_msg;
 //Command list
 float g_req_linear_vel_y = 0;
 float g_req_angular_vel_z = 0;
-float pwm_scale = 70;
-float base_size = 20.;
+float g_pwm_scale = 70;
 int g_motor_left = 0;
 int g_motor_right = 0;
 
 unsigned long g_prev_command_time = 0;
 int g_led0=0;
 int g_led1=0;
-
+float g_wheel_bias = 0.18;
 void commandCallback(const geometry_msgs::Twist& cmd_msg)
 {
     //callback function every time linear and angular speed is received from 'cmd_vel' topic
     //this callback function receives cmd_msg object where linear and angular speed are stored
-    g_motor_left = (cmd_msg.linear.x - cmd_msg.angular.z)*pwm_scale;
-    g_motor_right = (cmd_msg.linear.x + cmd_msg.angular.z)*pwm_scale;
+    // g_motor_left = (cmd_msg.linear.x - cmd_msg.angular.z)*pwm_scale;
+    // g_motor_right = (cmd_msg.linear.x + cmd_msg.angular.z)*pwm_scale/;
+
+    g_motor_left = ((cmd_msg.linear.x - (cmd_msg.angular.z * g_wheel_bias / 2.0)) / self.wheel_radius)
+    g_motor_right = ((cmd_msg.linear.x + (cmd_msg.angular.z * g_wheel_bias / 2.0)) / self.wheel_radius)
     
     g_motor_left = constrain(g_motor_left, -200, 200);
     g_motor_right = constrain(g_motor_right, -200, 200);

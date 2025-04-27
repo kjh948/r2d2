@@ -45,14 +45,15 @@ std_msgs::Int16 led_msg;
 //Command list
 float g_req_linear_vel_y = 0;
 float g_req_angular_vel_z = 0;
-float g_pwm_scale = 70;
+float g_pwm_scale = 120.;
 int g_motor_left = 0;
 int g_motor_right = 0;
 
 unsigned long g_prev_command_time = 0;
 int g_led0=0;
 int g_led1=0;
-float g_wheel_bias = 0.18;
+float g_wheel_bias = 0.18*6.;
+float g_pwm_comp = 0.85;//reduce the pwm of the left wheel
 void commandCallback(const geometry_msgs::Twist& cmd_msg)
 {
     //callback function every time linear and angular speed is received from 'cmd_vel' topic
@@ -60,8 +61,8 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
     // g_motor_left = (cmd_msg.linear.x - cmd_msg.angular.z)*pwm_scale;
     // g_motor_right = (cmd_msg.linear.x + cmd_msg.angular.z)*pwm_scale/;
 
-    g_motor_left = ((cmd_msg.linear.x - (cmd_msg.angular.z * g_wheel_bias / 2.0)) );
-    g_motor_right = ((cmd_msg.linear.x + (cmd_msg.angular.z * g_wheel_bias / 2.0)));
+    g_motor_left = ((cmd_msg.linear.x - (cmd_msg.angular.z * g_wheel_bias / 2.0)) * g_pwm_scale * g_pwm_comp);
+    g_motor_right = ((cmd_msg.linear.x + (cmd_msg.angular.z * g_wheel_bias / 2.0))* g_pwm_scale);
     
     g_motor_left = constrain(g_motor_left, -200, 200);
     g_motor_right = constrain(g_motor_right, -200, 200);
@@ -72,9 +73,9 @@ void moveBase()
 {
   moveMotor(g_motor_left,g_motor_right);
 
-  char ll[100];
-  sprintf(ll,"cmd_vel callback=\t%d",g_motor_left,g_motor_right);
-  nh.loginfo(ll);
+  // char ll[100];
+  // sprintf(ll,"cmd_vel callback=\t%d",g_motor_left,g_motor_right);
+  // nh.loginfo(ll);
 
 }
 
@@ -212,12 +213,12 @@ void loop() {
   if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
   {
       moveBase();
-      domeSetPos(g_dome_pose);
+      //domeSetPos(g_dome_pose);
       prev_control_time = millis();
   }
 
   //this block stops the motor when no command is received
-  if ((millis() - g_prev_command_time) >= 400)
+  if ((millis() - g_prev_command_time) >= 3000)
   {
       stopBase();
   }

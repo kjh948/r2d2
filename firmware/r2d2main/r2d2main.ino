@@ -60,8 +60,8 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
     // g_motor_left = (cmd_msg.linear.x - cmd_msg.angular.z)*pwm_scale;
     // g_motor_right = (cmd_msg.linear.x + cmd_msg.angular.z)*pwm_scale/;
 
-    g_motor_left = ((cmd_msg.linear.x - (cmd_msg.angular.z * g_wheel_bias / 2.0)) )
-    g_motor_right = ((cmd_msg.linear.x + (cmd_msg.angular.z * g_wheel_bias / 2.0)))
+    g_motor_left = ((cmd_msg.linear.x - (cmd_msg.angular.z * g_wheel_bias / 2.0)) );
+    g_motor_right = ((cmd_msg.linear.x + (cmd_msg.angular.z * g_wheel_bias / 2.0)));
     
     g_motor_left = constrain(g_motor_left, -200, 200);
     g_motor_right = constrain(g_motor_right, -200, 200);

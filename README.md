@@ -28,3 +28,6 @@ rosrun rosserial_python serial_node.py _port:=/dev/ttyACM0
 2.2 run keyop
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
+
+
+rosrun rqt_ez_publisher rqt_ez_publisher

@@ -3,7 +3,13 @@
 
 AF_DCMotor motorDome(3, MOTOR34_64KHZ);
 
-int motorSpeedDome = 100;//changed to 5V for motor power
+#include "PID.h"
+#define K_P 6.0
+#define K_I 0.0
+#define K_D 8.0
+PID dome_pid(-110, 110, K_P, K_I, K_D);
+
+int motorSpeedDome = 90;//changed to 12V for motor power
 
 enum PinAssignments {
   encoderPinA = 19,
@@ -63,28 +69,6 @@ void domeBreak()
 
 void domeSetPosHome(int pos)
 {
-  //enableDomeEncoder();
-  /*if(encoderPos<0)
-  {
-    
-    while(digitalRead(clearButton) != HIGH)
-    {
-      domeCW();
-      Serial.println("HomingNeg");
-    }
-    encoderPos = 0;
-  }
-  else if(encoderPos>0)
-  {
-    
-    while(digitalRead(clearButton) != HIGH)
-    {
-      domeCCW();
-      Serial.println("HomingPos");
-    }
-    encoderPos = 0;
-  }*/
-  
   if(pos>=0 && pos>encoderPos)
   {
     domeCW();
@@ -102,41 +86,32 @@ void domeSetPosHome(int pos)
       //Serial.println(encoderPos);
     domeBreak();  
   }
-  /*Serial.print("  #### Reached target  delta ===>  ");
-  Serial.println(encoderPos-pos, DEC);
-  Serial.print("  #### Current Pos ===>  ");
-  Serial.println(encoderPos, DEC);
-  
-  disableDomeEncoder();
-*/
+}
+
+void domeHoming()
+{  
+  domeCW();
+  delay(1000);
+  domeCCW();  
+  while(digitalRead(clearButton) != HIGH);
+      //Serial.println(encoderPos);
+  encoderPos = 0;
+  domeBreak();
 }
 
 void domeSetPos(int pos)
 {
-  if(pos>=0 && pos>encoderPos)
+  if(pos<-100)
   {
-    if(abs(encoderPos-pos)<1)
-    {
-      domeBreak();
-      return;
-    }
-    domeCW();
+    motorSpeedDome = 90;
+    domeHoming();
+    return;
   }
-  else if(pos<0 && pos<encoderPos)
-  {
-    if(abs(encoderPos-pos)<1)
-    {
-      domeBreak();  
-    }
-    domeCCW();
-  }
-  /*Serial.print("  #### Reached target  delta ===>  ");
-  Serial.println(encoderPos-pos, DEC);
-  Serial.print("  #### Current Pos ===>  ");
-  Serial.println(encoderPos, DEC);
-  
-  disableDomeEncoder();
-*/
+  motorSpeedDome = dome_pid.compute(pos, encoderPos);
+  if(motorSpeedDome>0) motorDome.run(BACKWARD);
+  else motorDome.run(FORWARD);
+
+  motorDome.setSpeed(abs(motorSpeedDome));
 }
 
 void domeEncoderTest(){ 
@@ -151,16 +126,7 @@ void domeEncoderTest(){
     encoderPos = 0;
   }
 }
-void domeHoming()
-{  
-  domeCW();
-  delay(1000);
-  domeCCW();  
-  while(digitalRead(clearButton) != HIGH)
-      //Serial.println(encoderPos);
-  encoderPos = 0;
-  domeBreak();
-}
+
 
 void domeMotorTest()
 {

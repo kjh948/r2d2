@@ -21,7 +21,6 @@
 lino_msgs::Imu raw_imu_msg;
 ros::Publisher raw_imu_pub("raw_imu", &raw_imu_msg);
 
-
 #define DEBUG
 
 #include "motor.h"
@@ -177,6 +176,8 @@ void setup(void)
   nh.getHardware()->setBaud(57600);
   nh.subscribe(cmd_sub);
   nh.subscribe(led_sub);
+  nh.subscribe(dome_sub);
+
 
   nh.advertise(raw_imu_pub);
 
@@ -213,7 +214,7 @@ void loop() {
   if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
   {
       moveBase();
-      //domeSetPos(g_dome_pose);
+      domeSetPos(g_dome_pose);
       prev_control_time = millis();
   }
 
@@ -244,7 +245,7 @@ void loop() {
       prev_imu_time = millis();
   }
 
-  if ((millis() - prev_pub_time) >= (1000 / PUBLISH_RATE))
+  if ((millis() - prev_pub_time) >= (1000 / SENSOR_RATE))
   {
     pubishSensor();
 
